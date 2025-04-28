@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #eee;
+        }
+        .navbar {
+            background-color: #1f1f1f;
+        }
+        .card {
+            background-color: #1c1c1c;
+            border: 1px solid purple;
+            color: #ccc;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            border-color: violet;
+        }
+        .btn-primary {
+            background-color: purple;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: violet;
+            color: black;
+        }
+        select, option {
+            background-color: #1c1c1c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">Stock Tracker</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="mb-4">Search Stock Price</h1>
+
+    <form method="get" action="/" class="mb-5">
+        <div class="input-group">
+            <select class="form-select" name="company">
+                {% for item in name_company %}
+                    <option value="{{ item['code'] }}">{{ item['company'] }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">Get Price</button>
+        </div>
+    </form>
+
+    <h2 class="mb-3">Selected Stock Price:</h2>
+    <div class="mb-5">
+        <h3>{{ price }}</h3>
+    </div>
+
+    <h2 class="mb-3">Most Active Stocks</h2>
+    <div class="row g-4">
+        {% for stock in most_active %}
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="card text-center p-3">
+                <h5 class="card-title">{{ stock.Company }}</h5>
+                <p class="card-text"><strong>Code:</strong> {{ stock.Code }}</p>
+                <p class="card-text"><strong>Price:</strong> {{ stock.Price }}</p>
+                <a href="{{url_for('test')}}">Explore</a>
+
+
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

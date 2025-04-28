@@ -1,0 +1,93 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Stock Data</title>-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div class="container mt-5">-->
+<!--        <h1>Stock Data</h1>-->
+<!--        <form method="POST" class="mb-3">-->
+<!--            <div class="form-group">-->
+<!--                <label for="ticker">Stock Ticker (e.g., RELIANCE):</label>-->
+<!--                <input type="text" class="form-control" id="ticker" name="ticker" required>-->
+<!--                <small class="form-text text-muted">Enter the NSE stock symbol (without .NS).</small>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label for="start_date">Start Date (YYYY/MM/DD):</label>-->
+<!--                <input type="text" class="form-control" id="start_date" name="start_date" placeholder="YYYY/MM/DD" required>-->
+<!--                <small class="form-text text-muted">Enter the start date in YYYY/MM/DD format.</small>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label for="end_date">End Date (YYYY/MM/DD):</label>-->
+<!--                <input type="text" class="form-control" id="end_date" name="end_date" placeholder="YYYY/MM/DD" required>-->
+<!--                <small class="form-text text-muted">Enter the end date in YYYY/MM/DD format.</small>-->
+<!--            </div>-->
+<!--            <button type="submit" class="btn btn-primary">Get Data</button>-->
+<!--        </form>-->
+
+<!--        {% if error %}-->
+<!--            <div class="alert alert-danger">{{ error }}</div>-->
+<!--        {% endif %}-->
+
+<!--        {% if table_data %}-->
+<!--            <h2>Stock Data Table</h2>-->
+<!--            {{ table_data|safe }}-->
+<!--        {% endif %}-->
+
+<!--        {% if fig_html %}-->
+<!--            <h2>High Price Chart</h2>-->
+<!--            {{ fig_html|safe }}-->
+<!--        {% endif %}-->
+<!--    </div>-->
+<!--    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Stock Data</h1>
+        <form method="POST" class="mb-3">
+<div class="form-group">
+                <label for="start_date">Start Date (YYYY/MM/DD):</label>
+                <input type="text" class="form-control" id="start_date" name="start_date" placeholder="YYYY/MM/DD" required>
+                <small class="form-text text-muted">Enter the start date in YYYY/MM/DD format.</small>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date (YYYY/MM/DD):</label>
+                <input type="text" class="form-control" id="end_date" name="end_date" placeholder="YYYY/MM/DD" required>
+                <small class="form-text text-muted">Enter the end date in YYYY/MM/DD format.</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Data</button>
+        </form>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if table_data %}
+            <h2>Stock Data Table</h2>
+            {{ table_data|safe }}
+        {% endif %}
+
+        {% if fig_html %}
+            <h2>High Price Chart</h2>
+            {{ fig_html|safe }}
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
