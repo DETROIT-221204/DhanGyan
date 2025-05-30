@@ -64,21 +64,29 @@
     </div>
 
     <h2 class="mb-3">Most Active Stocks</h2>
-    <div class="row g-4">
+    <div class="row g-4 mb-5">
         {% for stock in most_active %}
-
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card text-center p-3">
-                <h5 class="card-title">{{ stock.Company }}</h5>
-                <p class="card-text"><strong>Code:</strong> {{ stock.Code }}</p>
-                <p class="card-text"><strong>Price:</strong> {{ stock.Price }}</p>
-                <a href="{{url_for('test')}}">Explore</a>
-
-
-
+                <h5 class="card-title">{{ stock }}</h5>
+                <a href="{{ url_for('index', company=stock) }}" class="btn btn-primary mt-2">Explore</a>
             </div>
         </div>
         {% endfor %}
+    </div>
+
+    <div>
+        <h2 class="mb-3">Financial News</h2>
+        {% if headlines %}
+            {% for headline, link in headlines %}
+            <div class="mb-2">
+                {{ loop.index }}. <strong>{{ headline }}</strong><br>
+                <a href="{{ link }}" target="_blank">Read more</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No headlines available.</p>
+        {% endif %}
     </div>
 </div>
 
