@@ -5,16 +5,18 @@ import pandas as pd
 from flask import Flask, render_template, request, url_for
 import yfinance as yf
 import plotly.express as px
-from datetime import datetime
+from datetime import datetime, timedelta # Corrected: Only import datetime class and timedelta
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
 
 app = Flask(__name__)
 
 # Read data from CSV
 try:
-    data = pd.read_csv('NSE Symbols.CSV')
-    name_company = [{'company': data['Company Name'][_], 'code': data['Scrip'][_]} for _ in range(len(data))]
+    data_df = pd.read_csv('NSE Symbols.CSV') # Renamed to data_df to avoid conflict with 'data' variable in index function
+    name_company = [{'company': data_df['Company Name'][_], 'code': data_df['Scrip'][_]} for _ in range(len(data_df))]
 except FileNotFoundError:
     print("Error: CSV file 'NSE Symbols.CSV' not found.")
     name_company = []
@@ -57,7 +59,11 @@ def search():
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
+        # Ensure that the path to chromedriver is correctly set up
+        # If chromedriver is not in your PATH, you might need to specify it:
+        # driver = webdriver.Chrome(executable_path='/path/to/chromedriver', options=chrome_options)
         driver = webdriver.Chrome(options=chrome_options)
+
 
         url = 'https://www.google.com/finance'
         driver.get(url)
@@ -77,21 +83,42 @@ def search():
     return render_template('search.html', name_company=name_company, price=price,
                            most_active=most_active, headlines=headlines)
 
+data_df = pd.read_csv('NSE Symbols.CSV') # Renamed to data_df to avoid conflict with 'data' variable in index function
+name_company1 = [{'company': data_df['Company Name'][_], 'code': data_df['Scrip'][_]} for _ in range(len(data_df))]
 @app.route('/<string:company>', methods=['GET', 'POST'])
 def index(company):
+
     table_data = None
     fig_html = None
     error = None
+    scrip_code = None
+
+    # Default date values
+    end_date_obj = datetime.now()
+    start_date_obj = end_date_obj - timedelta(days=365)
+
+    # Formatted strings to display in form
+    start_date_str_display = start_date_obj.strftime('%Y/%m/%d')
+    end_date_str_display = end_date_obj.strftime('%Y/%m/%d')
+
+    # Get first word of company
+    first_word = company.strip().lower().split()[0]
+
+    for entry in name_company1:
+        company_first_word = entry['company'].strip().lower().split()[0]
+        if company_first_word == first_word:
+            scrip_code = entry['code']
+            break
 
     if request.method == 'POST':
         ticker_input = request.form['ticker']
-        ticker = ticker_input + '.NS'
         start_date_str = request.form['start_date']
         end_date_str = request.form['end_date']
+        ticker = ticker_input + '.NS'
 
         try:
-            if not ticker.upper().endswith('.NS'):
-                raise ValueError("Only NSE stock symbols ending with '.NS' are allowed.")
+            start_date = datetime.strptime(start_date_str, '%Y/%m/%d').strftime('%Y-%m-%d')
+            end_date = datetime.strptime(end_date_str, '%Y/%m/%d').strftime('%Y-%m-%d')
 
             ticker_obj = yf.Ticker(ticker)
             info = ticker_obj.info
@@ -100,9 +127,6 @@ def index(company):
             if currency != 'INR':
                 raise ValueError("Ticker is not in INR. Please enter a valid NSE stock ticker.")
 
-            start_date = datetime.strptime(start_date_str, '%Y/%m/%d').strftime('%Y-%m-%d')
-            end_date = datetime.strptime(end_date_str, '%Y/%m/%d').strftime('%Y-%m-%d')
-
             data = yf.download(ticker, start=start_date, end=end_date)
 
             if not data.empty:
@@ -110,13 +134,11 @@ def index(company):
                 data['Date'] = pd.to_datetime(data['Date'])
                 table_data = data.to_html(classes='table table-striped', index=False)
 
-                high_prices = data['High'] if 'High' in data.columns else None
-                if high_prices is not None:
-                    fig = px.line(data, x='Date', y=high_prices, title=f'{ticker} High Prices Over Time')
+                if 'High' in data.columns:
+                    fig = px.line(data, x='Date', y='High', title=f'{ticker} High Prices Over Time')
                     fig_html = fig.to_html(full_html=False)
                 else:
                     error = f"Error: 'High' price data not found for {ticker}."
-
             else:
                 error = "No data found for the given date range."
 
@@ -124,8 +146,18 @@ def index(company):
             error = f"Validation Error: {ve}"
         except Exception as e:
             error = f"Error fetching data: {e}"
-
-    return render_template('graph.html', company=company, table_data=table_data, fig_html=fig_html, error=error)
+    price=get_stock_price(scrip_code)
+    return render_template(
+        'graph.html',
+        company=company,
+        scrip_code=scrip_code,
+        table_data=table_data,
+        fig_html=fig_html,
+        error=error,
+        start_date_display=start_date_str_display,
+        end_date_display=end_date_str_display,
+        price=price  # ✅ Added comma here
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
